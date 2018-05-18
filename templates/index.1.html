@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='css/main.css') }}" />
+    <script src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</head>
+<body>
+    <script>
+        movie = 'wsys.flv'
+        ts_start=88000
+        ts_end=98000
+        fps = 5
+
+        start = new Date().getTime()
+        var buffer = ['','']
+        var buffer_select = 0
+        var buffer_size = 10
+        //1、填充两个缓冲区
+        $.get("getascii?file=wsyw.flv&start="+ts_start+"&end="+ts_end+"&fps="+fps, function(result){
+            buffer[0] = JSON.parse(result)
+        });
+        $.get("getascii?file=wsyw.flv&start="+ts_start+"&end="+ts_end+"&fps="+fps, function(result){
+            buffer[1] = JSON.parse(result)
+        });
+
+        //2、启动定时器
+        setInterval(function(){
+            time_offset = parseInt((new Date().getTime() - start)/10)*10
+            cursor = ts_start + time_offset
+            if(cursor <= buffer[buffer_select]['info']['end']){
+                $("#main-screen").html(buffer[buffer_select][cursor])
+            }else{
+                //切换缓冲区
+                this_buffer = buffer_select
+                buffer_select = (buffer_select+1)%2
+                //填充另一个缓冲区
+                $.get("getascii?file=wsyw.flv&start="+ts_start+"&end="+ts_end+"&fps="+fps, function(result){
+                    buffer[this_buffer] = JSON.parse(result)
+                });
+            }
+
+
+        },1000/fps)
+
+        
+        
+    </script>
+
+    <div id="main-screen" class="main-screen">
+            LcLccccLttfffffffffLfLfLfG0008GGGGG@@@GGGGG00GfGG880cfLLL0LttfGcftttfc0G000000GG0ftcL,Lt:,.<br/>cLLLLcLLffLfLffffffcfcG0880880G00800GGGG00GGG1f08@GLLGLtc8tf1tLccftfftLGG0000GGGc,,,,,,1,,,<br/>cLccLLLLffLLLLfffff00008GG0888000880000000GGGt@8@8LfLLtffffLcccLfftt1i11fGG000000001ii1f;c,<br/>1ffLfffLfLfLLffffc80080000@0000008@8@8@8G88888t@8LfctttfttfLccctt1t11G@11@88000880:,,,,,,;,<br/>ffLcLffLfffLLffff808008888088808G8@@8@@@0c888@,08LfLLLfffffcLLcfGL0G8cGcLffGG00ttit1:1t1t;;<br/>;i;t:;itffffffffL80@808@@@@@@@@@@@@@@@@@8G088@,80cGGccccLLcGcG8@1tfLft111ttfcttt1GL8:c,;c;1<br/>1t;t;ii1fffLLfftc8@.LLccGG0080000008@@@808L08@,G0cLffcc8ctLifccGtLtt1i1111ttLtfcfif,,::,:t:<br/>1i;t,::iffffffff8@@GffffLLLLLLLfffLcG@@@00L@8@,;1tLG8L00Li;;fftttt11iii1t1ttLtiicf1,G,1:,;,<br/>1iit1;;;ffffffff0@8fttffLffLLLLfffLLL08808t@8.f1,LGiLG0f;;iiittt111111itttttff1it1;,L::;t,:<br/>cGGGGG0Gffffffff0@0tttttt11tttttfLLLc8@088f08@,G::tGGLtft1;;;;1LGLfffftfffttttt1i11;,,,,,,,<br/>LLLLLLLLffffffffc8ffLffffffftfttttfLc88888088.,.,,ttitLtLcL@@88ttcGcLtfftfttfttf08:,,cLtcLc<br/>LLLLLLLLcLffffffc0GGcc0800GG08@800GLLc88G0L08.,.,,tttLcG800GLt111tffcfttfttfftt1001,::ftf1f<br/>LLLLLLcLfffffffff@0@@@@.@@08.88008808LG80Gf88.,,,,cffccLLcLLtiii1ffcffftftffftt1c0c,;:ctcLL<br/>fLfccccLtfffffffff8@G08800L0@88@@@@0cGGGcL080@,.,,,fLcLLLL000GG0111tfLLffffffffff0G,,,,,,,,<br/>ffccLccLfffffffffLffLcLLLfLLcG0GcLccGttGft800.,,,,,,LcLcc880cffLLftttcccLLLLLLLft1,,,,,,...<br/>t1t1ttcLfffffffffLccG08fftfcL8GcccGcGttGc8888.,,,,,,icLcccccGG0GffttttLcccccGcLftfG0ci,,,,,<br/>ff1GG,Gcffffffffffc08@GGG00@@G800008Gt@8@@@88.,,,,,,,fLcLLccGcLLfftffLccG00GcLfttGcGGcc,,,,<br/>cc;cc,cffftfffffffGGGGcLc0GGcGG08880c.@8@8888@,.,,..,,,cLLLLfffLLLccG0000GGcLLfttGGGGGccc,,<br/>GGGGGGcLfffffffffffGcccLcGG0@0000880t,8888888.,,....,,,,:LcccGGG00888000GGcLLfftGGG0GGGcLci<br/>00000000GffffffffffLcGcLG00GG000880ffi@8@@@88@,,,,.....,,,,,8808888800GGccLLffcGGG0GGGGGGcc<br/>88880888GffffffffffLccLG088800G08Gc0ii@GcLG88@,,,,.....,,,,,,100008800GcccLLL0000000GGGGGGc<br/>88888880GLffffffLffG80cccccGG080G0fii;00GGc88@,,,,..,,,,,,08000GGGG00GGGGcc08000000000000GG<br/>88@@8@88Gfffffff888881;.88888888Gtii1@@88800000,,,,,,,;00088888@GG008000GG888800800000000GG<br/>@8@@@@@@8fft000880888@11tfL0@8G01;;i@@888880000GGG800000888888@88800G00888880088000000000G0<br/>8@@@@@8@0GG00880000888tii0GGLGLc0G1L@@888880880800000008@88888@8888880880008888880000000000<br/>@@.@00G0008088008088888i@0L1LfG8GcL8@@888880@8800088888@@88888@808@@0088888808888000000000G<br/>80000008800008.00088@@@tcL0GfGL1ftL@@@@88@@08880888808@8888888@00@0088008888088888000000000<br/>800000008880888t00f0LG;ittt080Gc.0G@@fL08@1t@@t0fG0iGc8t1188ff8@8G0c0Lti.0i:1i8888000880880<br/>080000888000800f8@10iiL1t1it.8L;11@8.Gt08@LG@@@@8G8@.i.@LGf8G@@..@0i08GGc8i101888888@@88888<br/>8888888888088888@0088808;t1GcLGL1@80@8@@8.80.888@@@88888G8@8888@@0008@@..8.8@@8888888888888<br/>80@888@8888888088888888@;t:t1ifG18@@8@888888@8888888888888888@@@@08.0G@@.@8@888888888888880<br/>
+    </div>
+
+
+</body>
+</html>

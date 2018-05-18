@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{{title}}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='css/main.css') }}" />
+    <script src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</head>
+<body>
+    <script>
+        file = "{{video}}"
+        audio = "{{audio}}"
+        ts_start = {{start}}
+        ts_end = {{end}}
+        fps = {{fps}}
+
+        start = new Date().getTime()
+        var buffer = ''
+        var buffer_select = 0
+        var finish = 0
+
+        //1、填充缓冲区
+        $.get("getascii?file="+file+"&start="+ts_start+"&end="+ts_end+"&fps="+fps, function(result){
+            buffer = JSON.parse(result)
+            finish = 1
+            document.getElementById('main-audio').currentTime=ts_start/1000
+            document.getElementById('main-audio').play()
+            start = new Date().getTime()
+        });
+
+
+        //2、启动定时器
+        var c = setInterval(function(){
+            if (finish){
+                time_offset = parseInt((new Date().getTime() - start)/200)*200
+                cursor = ts_start + time_offset
+                if(cursor <= buffer['info']['end']){
+                    $("#main-screen").html(buffer[cursor])
+                }else{
+                    window.clearInterval(c);
+                    document.getElementById('main-audio').pause();
+                    console.log('done');
+                }
+            }else{
+                console.log('loading')
+            }
+        },1000/fps)
+        
+    </script>
+
+    <div id="main-screen" class="main-screen">
+        init...
+    </div>
+    <audio id="main-audio" controls="controls">
+        <source id="main-audio-source" src="static/audio/{{audio}}.ogg" type="audio/ogg" />
+          Your browser does not support the audio element.
+    </audio>
+
+
+</body>
+</html>
