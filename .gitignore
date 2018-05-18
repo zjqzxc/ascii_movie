@@ -103,8 +103,6 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-
-
 statics/video/
 statics/audio/
 snap/
